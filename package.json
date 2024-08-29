@@ -1,6 +1,7 @@
 {
 	"dependencies": {
-		"express": "^4.19.2"
+		"express": "^4.19.2",
+		"tsyringe": "^4.8.0"
 	},
 	"devDependencies": {
 		"@swc/core": "^1.7.21",
