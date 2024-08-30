@@ -19,6 +19,7 @@
       "@/Authorizers": ["./src/app/Authorizers"],
       "@/Validators": ["./src/app/Validators"],
       "@/Helpers": ["./src/app/Helpers"],
+      "@/Services": ["./src/app/Services"],
     }
   }
 }

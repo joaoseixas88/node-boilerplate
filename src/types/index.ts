@@ -1,3 +1,4 @@
+export * from "./auth-token-creator";
 export * from "./authorizer";
 export * from "./base-validator";
 export * from "./http";
