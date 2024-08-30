@@ -2,25 +2,25 @@ import { User } from "@/types/user";
 
 export interface HttpResponse<T = any> {
   statusCode: number;
-  data: T;
+  data?: T;
 }
 
 export interface HttpContextContract {
   request: {
     allParams<T = any>(): T;
-    headers(): Record<string, string>;
-    queryParam(): Record<string, string>;
+    headers(): Record<string, string | string[] | undefined>;
+    queryParams<T = any>(): T | Record<string, string | undefined>;
     body<T = any>(): T;
-    params(): Record<string, string>;
+    params<T = any>(): T | Record<string, string>;
     auth: {
       user?: User;
     };
   };
   response: {
     ok<T = any>(data: T): HttpResponse;
-    badRequest(data: any): HttpResponse;
+    badRequest(error: Error | string): HttpResponse;
     noContent(data: any): HttpResponse;
-    internalServerError(): HttpResponse;
+    internalServerError(err?: Error | string): HttpResponse;
     notFound(data?: any): HttpResponse;
     created(): HttpResponse;
     sendFile(filePath: string, fileName?: string): void;
