@@ -15,7 +15,8 @@
     "paths": {
       "@/*": ["./src/*"],
       "@/Controllers": ["./src/app/Controllers"],
-      "@/Excepetions": ["./src/app/Excepetions"]
+      "@/Excepetions": ["./src/app/Excepetions"],
+      "@/Authorizers": ["./src/app/Authorizers"]
     }
   }
 }

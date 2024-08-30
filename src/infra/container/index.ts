@@ -1,6 +1,6 @@
-import { RouterAdapter } from "@/infra/config/adapters/RouteAdapter";
-import { JwtAuththorizer } from "@/infra/config/JwtAuthorizer";
-import { authMiddlewahe } from "@/infra/middlewares";
+import { JwtAuththorizer } from "@/app/Authorizers/JwtAuthorizer";
+import { RouterAdapter } from "@/infra/config/http/adapters/RouteAdapter";
+import { authMiddlewahe } from "@/infra/config/http/middlewares";
 import { container } from "tsyringe";
 
 container.register("authorizer", { useClass: JwtAuththorizer });

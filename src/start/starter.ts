@@ -1,5 +1,5 @@
+import { Router } from "@/infra/config";
 import express, { json } from "express";
-import { Router } from "@/infra/config/router";
 export class Starter {
   start() {
     const app = express();

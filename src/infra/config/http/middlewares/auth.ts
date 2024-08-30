@@ -1,5 +1,5 @@
-import { RouterMiddleware } from "@/infra/config/adapters/RouteAdapter";
-import { JwtAuththorizer } from "@/infra/config/JwtAuthorizer";
+import { JwtAuththorizer } from "@/app/Authorizers/JwtAuthorizer";
+import { RouterMiddleware } from "@/infra/config/http/adapters/RouteAdapter";
 import { NextFunction, Request, Response } from "express";
 import { container } from "tsyringe";
 

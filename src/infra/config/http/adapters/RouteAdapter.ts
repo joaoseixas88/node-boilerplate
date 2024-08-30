@@ -1,10 +1,10 @@
-import { methodAdapterToExpress } from "@/infra/config/adapters/MethodAdapter";
+import { methodAdapterToExpress } from "@/infra/config/http/adapters/MethodAdapter";
 import {
-	Application,
-	Router as ExpressRouter,
-	NextFunction,
-	Request,
-	Response,
+  Application,
+  Router as ExpressRouter,
+  NextFunction,
+  Request,
+  Response,
 } from "express";
 import { inject, injectable, singleton } from "tsyringe";
 
