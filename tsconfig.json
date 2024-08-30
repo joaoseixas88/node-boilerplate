@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "es2016",
-		"outDir": "dist",
+    "outDir": "dist",
     "module": "commonjs",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
@@ -9,8 +9,13 @@
     "skipLibCheck": true,
     "baseUrl": ".",
     "rootDir": ".",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "typeRoots": ["./src/@types", "./node_modules/@types"],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@/Controllers": ["./src/app/Controllers"],
+      "@/Excepetions": ["./src/app/Excepetions"]
     }
   }
 }
