@@ -109,6 +109,9 @@ export const methodAdapterToExpress =
       }
     } catch (error) {
       console.error("error:", error);
+      if (error instanceof HttpException) {
+        return res.status(error.statusCode).json(error);
+      }
       if (error instanceof ValidationException) {
         return res.status(error.statusCode).json(error.issues);
       }

@@ -20,6 +20,7 @@
       "@/Validators": ["./src/app/Validators"],
       "@/Helpers": ["./src/app/Helpers"],
       "@/Services": ["./src/app/Services"],
+      "@/Database": ["src/infra/db/prisma/Database.ts"]
     }
   }
 }
