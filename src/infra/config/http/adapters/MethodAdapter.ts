@@ -14,6 +14,9 @@ const httpContextAdapter = (
 ): HttpContextContract => {
   return {
     response: {
+      unprocessableEntity() {
+        return { statusCode: 422 };
+      },
       sendFile: (filePath: string, fileName?: string) => {
         const options = fileName
           ? {

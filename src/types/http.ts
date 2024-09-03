@@ -1,4 +1,4 @@
-import { User } from "@/types/user";
+import { SignedUser } from "@/types/user";
 
 export interface HttpResponse<T = any> {
   statusCode: number;
@@ -13,7 +13,7 @@ export interface HttpContextContract {
     body<T = any>(): T;
     params<T = any>(): T | Record<string, string>;
     auth: {
-      user?: User;
+      user?: SignedUser;
     };
   };
   response: {
@@ -24,5 +24,6 @@ export interface HttpContextContract {
     notFound(data?: any): HttpResponse;
     created(): HttpResponse;
     sendFile(filePath: string, fileName?: string): void;
+    unprocessableEntity(): HttpResponse;
   };
 }

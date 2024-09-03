@@ -1,5 +1,5 @@
-import { User } from "@/types/user";
+import { SignedUser } from "@/types/user";
 
 export interface Authorizer {
-  verify(token: string): User | undefined;
+  verify(token: string): SignedUser | undefined;
 }

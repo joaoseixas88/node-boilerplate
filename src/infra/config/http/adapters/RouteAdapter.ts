@@ -1,10 +1,10 @@
 import { methodAdapterToExpress } from "@/infra/config/http/adapters/MethodAdapter";
 import {
-  Application,
-  Router as ExpressRouter,
-  NextFunction,
-  Request,
-  Response,
+	Application,
+	Router as ExpressRouter,
+	NextFunction,
+	Request,
+	Response
 } from "express";
 import { inject, injectable, singleton } from "tsyringe";
 
@@ -18,6 +18,14 @@ export type RouterMiddleware = (
 
 type MiddlewareEnum = "auth";
 
+type RouteParams<T = any> = {
+  path: string;
+  controller: new (...args: any[]) => T;
+  method: keyof T;
+  httpMethod: "get" | "put" | "delete" | "post";
+  middleware?: RouterMiddleware;
+};
+
 @singleton()
 @injectable()
 export class RouterAdapter {
@@ -25,29 +33,20 @@ export class RouterAdapter {
     this.middlewares["auth"] = authMiddleware;
   }
   private middlewares = {} as Record<MiddlewareEnum, RouterMiddleware>;
-
-  private routes: ExpressRouter[] = [];
-  private add(router: ExpressRouter): ExpressRouter {
+  public routes: RouteParams[] = [];
+  private add(router: RouteParams): RouteParams {
     this.routes.push(router);
     const lastRoute = this.routes[this.routes.length - 1];
     return lastRoute;
   }
-  private sanitize(path: string) {
-    const pattern = /^\/([^\/]+\/?)+$/;
-    if (pattern.test(path)) {
-      path = path[0] === "/" ? path : "/" + path;
-      return path;
-    } else {
-      throw new Error(`Malformed route: ${path}`);
-    }
-  }
+
   get<T>(path: string, controller: new (...args: any[]) => T, method: keyof T) {
-    const route = this.add(
-      router.get(
-        this.sanitize(path),
-        methodAdapterToExpress(controller, method)
-      )
-    );
+    const route = this.add({
+      controller,
+      httpMethod: "get",
+      method,
+      path,
+    });
     return {
       prefix: (path: string) => this._prefix(path, route),
       middleware: (middleware: MiddlewareEnum) => {
@@ -55,19 +54,28 @@ export class RouterAdapter {
       },
     };
   }
-  private middleware(middleware: RouterMiddleware, route: ExpressRouter) {
-    router.use(middleware as () => void, route);
+  private middleware(middleware: RouterMiddleware, route: RouteParams) {
+    route.middleware = middleware;
     return {
       prefix: (path: string) => this._prefix(path, route),
     };
   }
 
-  private _prefix(path: string, route: ExpressRouter) {
-    const hasSlash = path[0] === "/";
-    router.use(hasSlash ? path : "/" + path, route);
+  private sanitizedPrefix(prefix: string, oldPath: string): string {
+    let newRoutePath = "";
+    const oldPathHasSlash = oldPath[0] === "/";
+    const newPath = oldPathHasSlash ? oldPath : "/" + oldPath;
+    const prefixHasSlash = prefix[0] === "/";
+    newRoutePath = (prefixHasSlash ? prefix : "/" + prefix).concat(newPath);
+    const lastIndex = newRoutePath.length - 1;
+    const lastCharIsSlash = newRoutePath[lastIndex] === "/";
+    return lastCharIsSlash ? newRoutePath.slice(0, lastIndex) : newRoutePath;
+  }
+  private _prefix(prefix: string, routeParams: RouteParams) {
+    routeParams.path = this.sanitizedPrefix(prefix, routeParams.path);
     return {
       middleware: (middleware: MiddlewareEnum) =>
-        this.middleware(this.middlewares[middleware], route),
+        this.middleware(this.middlewares[middleware], routeParams),
     };
   }
   group(callback: () => void) {
@@ -96,12 +104,7 @@ export class RouterAdapter {
     controller: new (...args: any[]) => T,
     method: keyof T
   ) {
-    const route = this.add(
-      router.post(
-        this.sanitize(path),
-        methodAdapterToExpress(controller, method)
-      )
-    );
+    const route = this.add({ controller, httpMethod: "post", method, path });
     return {
       prefix: (path: string) => this._prefix(path, route),
       middleware: (middleware: MiddlewareEnum) => {
@@ -110,12 +113,7 @@ export class RouterAdapter {
     };
   }
   put<T>(path: string, controller: new (...args: any[]) => T, method: keyof T) {
-    const route = this.add(
-      router.put(
-        this.sanitize(path),
-        methodAdapterToExpress(controller, method)
-      )
-    );
+    const route = this.add({ controller, httpMethod: "put", method, path });
     return {
       prefix: (path: string) => this._prefix(path, route),
       middleware: (middleware: MiddlewareEnum) => {
@@ -128,12 +126,7 @@ export class RouterAdapter {
     controller: new (...args: any[]) => T,
     method: keyof T
   ) {
-    const route = this.add(
-      router.delete(
-        this.sanitize(path),
-        methodAdapterToExpress(controller, method)
-      )
-    );
+    const route = this.add({ controller, httpMethod: "delete", method, path });
     return {
       prefix: (path: string) => this._prefix(path, route),
       middleware: (middleware: MiddlewareEnum) => {
@@ -144,7 +137,17 @@ export class RouterAdapter {
 
   applyRoutes(app: Application) {
     for (const route of this.routes) {
-      app.use(route);
+      const { controller, method, path, httpMethod } = route;
+
+      if (httpMethod === "get")
+        router.get(path, methodAdapterToExpress(controller, method));
+      if (httpMethod === "post")
+        router.post(path, methodAdapterToExpress(controller, method));
+      if (httpMethod === "put")
+        router.put(path, methodAdapterToExpress(controller, method));
+      if (httpMethod === "delete")
+        router.delete(path, methodAdapterToExpress(controller, method));
     }
+    app.use(router);
   }
 }

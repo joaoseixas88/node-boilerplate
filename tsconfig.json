@@ -11,16 +11,17 @@
     "rootDir": ".",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "typeRoots": ["./src/@types", "./node_modules/@types"],
+    "typeRoots": ["@types", "./node_modules/@types"],
     "paths": {
-      "@/*": ["./src/*"],
-      "@/Controllers": ["./src/app/Controllers"],
-      "@/Excepetions": ["./src/app/Excepetions"],
-      "@/Authorizers": ["./src/app/Authorizers"],
-      "@/Validators": ["./src/app/Validators"],
-      "@/Helpers": ["./src/app/Helpers"],
-      "@/Services": ["./src/app/Services"],
-      "@/Database": ["src/infra/db/prisma/Database.ts"]
+      "@/Database": ["src/infra/db/prisma/Database.ts"],
+      "@/Env": ["src/infra/config/env.ts"],
+      "@/Controllers/*": ["./src/app/Controllers/*"],
+      "@/Excepetions/*": ["./src/app/Excepetions/*"],
+      "@/Authorizers/*": ["./src/app/Authorizers/*"],
+      "@/Validators/*": ["./src/app/Validators/*"],
+      "@/Helpers/*": ["./src/app/Helpers/*"],
+      "@/Services/*": ["./src/app/Services/*"],
+      "@/*": ["./src/*"]
     }
   }
 }

@@ -2,6 +2,8 @@
   "dependencies": {
     "@prisma/client": "5.19.0",
     "bcrypt": "^5.1.1",
+    "dotenv": "^16.4.5",
+    "esbuild": "^0.23.1",
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
     "reflect-metadata": "^0.2.2",
@@ -24,6 +26,8 @@
     "typescript": "^5.5.4"
   },
   "scripts": {
-    "dev": "pnpm ts-node-dev --respawn -r tsconfig-paths/register server.ts"
+    "dev": "pnpm ts-node-dev --respawn -r tsconfig-paths/register server.ts",
+    "build": "tsc --noEmit && rm -rf dist && node esbuild.config.mjs",
+    "start:prod": "tsc --noEmit && rm -rf dist && node esbuild.config.mjs && node dist"
   }
 }

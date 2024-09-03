@@ -1,4 +1,4 @@
-import { Authorizer, User } from "@/types";
+import { Authorizer, SignedUser } from "@/types";
 import jwt from "jsonwebtoken";
 import { inject, injectable } from "tsyringe";
 
@@ -12,7 +12,7 @@ export class JwtAuththorizer implements Authorizer {
   verify(token: string) {
     try {
       const isValid = jwt.verify(token, this.secret);
-      return isValid as User;
+      return isValid as SignedUser;
     } catch (error) {
       return undefined;
     }
