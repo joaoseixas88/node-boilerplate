@@ -1,12 +1,11 @@
 import { JwtAuththorizer } from "@/app/Authorizers/JwtAuthorizer";
-import { RouterMiddleware } from "@/infra/config/http/adapters/RouteAdapter";
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Request, RequestHandler, Response } from "express";
 import { container } from "tsyringe";
 
-export const authMiddlewahe: RouterMiddleware = (
+export const authMiddleware: RequestHandler = (
   req: Request,
   res: Response,
-  next: () => NextFunction
+  next: NextFunction
 ): void => {
   const authorization = req.headers.authorization;
   if (!authorization) {

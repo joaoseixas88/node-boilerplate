@@ -1,4 +1,4 @@
-import { container } from "tsyringe";
-import { RouterAdapter } from "./adapters/RouteAdapter";
+import { authMiddleware } from "./middlewares";
+import { Router as RoutingRoot } from "./router/Router";
 
-export const Router = container.resolve(RouterAdapter);
+export const Router = new RoutingRoot({ auth: authMiddleware });

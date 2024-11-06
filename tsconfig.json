@@ -6,10 +6,12 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
+    "lib": ["ES2021.String"],
     "skipLibCheck": true,
     "baseUrl": ".",
     "rootDir": ".",
     "experimentalDecorators": true,
+    "resolveJsonModule": true,
     "emitDecoratorMetadata": true,
     "typeRoots": ["@types", "./node_modules/@types"],
     "paths": {

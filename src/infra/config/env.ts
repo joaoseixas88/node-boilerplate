@@ -10,7 +10,7 @@ const env = () => {
     return env;
   } catch (error) {
     if (error instanceof ZodError) {
-      const issue = error.issues[0];
+      const issue = error.issues;
       console.error(issue);
     }
     process.exit(1);

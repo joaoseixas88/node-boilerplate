@@ -1,9 +1,10 @@
-import { User } from "@/types/user";
+import { AuthenticatedUser, SignedUser } from '@/types/user';
 
 declare global {
   namespace Express {
     interface Request {
-      user: User;
+      user?: AuthenticatedUser;
+      files?: Express.Multer.File[];
     }
   }
 }
