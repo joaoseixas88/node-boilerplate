@@ -6,7 +6,7 @@ import { MiddleTypes } from "./middletype";
 import { Route } from "./Route";
 import { HttpMethod } from "./route-types";
 
-const expressRouter = ExpressRouter()
+const expressRouter = ExpressRouter();
 
 export class Router {
   private routes: (Route | GroupRoute)[] = [];
@@ -85,9 +85,13 @@ export class Router {
     for (const route of this.routes) {
       route.builder(expressRouter);
     }
-    app.use(expressRouter)
+    app.use(expressRouter);
     expressRouter.stack.forEach(({ route }) => {
-      console.log(`route ${route?.path}`);
+      console.log(
+        `\x1b[32mLOG\x1b[0m \x1b[33m[MappedRoute]\x1b[0m \x1b[32m{${
+          route?.path
+        }, ${route?.stack[0].method.toUpperCase()}}\x1b[0m`
+      );
     });
   }
 }

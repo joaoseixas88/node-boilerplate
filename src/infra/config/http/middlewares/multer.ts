@@ -1,5 +1,4 @@
 import { ErrorHelper } from '@/Helpers/ErrorHelper';
-import { RouterMiddleware } from '@/infra/config/http/adapters/RouteAdapter';
 import { NextFunction, Request, Response } from 'express';
 import { existsSync, mkdirSync } from 'fs';
 import multer from 'multer';
