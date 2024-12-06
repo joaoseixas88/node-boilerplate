@@ -1,5 +1,5 @@
 import { ErrorHelper } from '@/Helpers/ErrorHelper';
-import { NextFunction, Request, Response } from 'express';
+import { NextFunction, Request, RequestHandler, Response } from 'express';
 import { existsSync, mkdirSync } from 'fs';
 import multer from 'multer';
 
@@ -18,7 +18,7 @@ export const multerConfig = multer({
   }),
 });
 
-export const multerMiddleware: RouterMiddleware = (
+export const multerMiddleware: RequestHandler = (
   req: Request,
   res: Response,
   next: NextFunction,

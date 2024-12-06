@@ -1,6 +1,7 @@
 import { Application, RequestHandler, Router as ExpressRouter } from "express";
 import { MiddleTypes } from "./middletype";
 import { HttpMethod } from "./route-types";
+import { multerMiddleware } from "../middlewares";
 
 export function dropSlash(input: string): string {
   if (input === "/") {
@@ -48,15 +49,15 @@ export class Route {
     return prefix ? `${prefix}${pattern === "/" ? "" : pattern}` : pattern;
   }
 
-  get builder(){
-    return this.applyRoute
+  get builder() {
+    return this.applyRoute;
   }
 
   private applyRoute(expressRouter: ExpressRouter) {
     const pattern = this.getPattern();
     const handler: RequestHandler[] = this.middlewares.length
-      ? [...this.middlewares, this.handler]
-      : [this.handler];
+      ? [...this.middlewares, multerMiddleware, this.handler]
+      : [multerMiddleware, this.handler];
     switch (this.httpMethod) {
       case "get":
         expressRouter.get(pattern, ...handler);
