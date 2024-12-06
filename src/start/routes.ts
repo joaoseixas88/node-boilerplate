@@ -11,4 +11,4 @@ Router.group(() => {
   Router.group(() => {
     Router.post("/:id/ola", Health, "show");
   }).prefix("teste1").middleware('auth')
-}).prefix("group");
+}).prefix("group")
