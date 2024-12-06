@@ -15,7 +15,7 @@
     "emitDecoratorMetadata": true,
     "typeRoots": ["@types", "./node_modules/@types"],
     "paths": {
-      "@/Database": ["src/infra/db/prisma/Database.ts"],
+      "@/Database": ["src/infra/db/knex/Database1.ts"],
       "@/Env": ["src/infra/config/env.ts"],
       "@/Controllers/*": ["./src/app/Controllers/*"],
       "@/Excepetions/*": ["./src/app/Excepetions/*"],

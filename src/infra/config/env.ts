@@ -1,8 +1,7 @@
+import { envValidator } from "@/env-variables";
 import { z, ZodError } from "zod";
 
-const envValidator = z.object({
-  DATABASE_URL: z.string(),
-});
+
 
 const env = () => {
   try {

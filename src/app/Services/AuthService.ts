@@ -1,5 +1,5 @@
 import { UnauthorizedException } from "@/app/Exceptions/Unauthorized";
-import Database from "@/Database";
+import Database from "@/infra/db/knex/Database1";
 import { AuthTokenCreator, UserRole } from "@/types";
 import { compare } from "bcrypt";
 import { inject, injectable } from "tsyringe";

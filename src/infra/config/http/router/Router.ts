@@ -21,7 +21,6 @@ export class Router {
   }
 
   private pushToRoutes(route: Route | GroupRoute) {
-    console.log("route:", route);
     const openGroup = this.openGroup[this.openGroup.length - 1];
     if (openGroup) {
       openGroup.routes.push(route);
