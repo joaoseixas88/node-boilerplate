@@ -1,3 +1,4 @@
+import { UsersTable } from "@/types/database/users";
 import "knex";
 declare module "knex" {
   namespace Knex {
@@ -11,5 +12,11 @@ declare module "knex" {
         value: string | undefined | null
       ): Knex.QueryBuilder<TRecord, TResult>;
     }
+  }
+}
+
+declare module "knex/types/tables" {
+  export interface Tables {
+    users: UsersTable;
   }
 }

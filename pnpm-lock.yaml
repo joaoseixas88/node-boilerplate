@@ -38,9 +38,15 @@ importers:
       postgres:
         specifier: ^3.4.5
         version: 3.4.5
+      radash:
+        specifier: ^12.1.0
+        version: 12.1.0
       reflect-metadata:
         specifier: ^0.2.2
         version: 0.2.2
+      ts-case-convert:
+        specifier: ^2.1.0
+        version: 2.1.0
       tsyringe:
         specifier: ^4.8.0
         version: 4.8.0
@@ -1955,6 +1961,10 @@ packages:
     resolution: {integrity: sha512-+38qI9SOr8tfZ4QmJNplMUxqjbe7LKvvZgWdExBOmd+egZTtjLB67Gu0HRX3u/XOq7UU2Nx6nsjvS16Z9uwfpg==}
     engines: {node: '>=0.6'}
 
+  radash@12.1.0:
+    resolution: {integrity: sha512-b0Zcf09AhqKS83btmUeYBS8tFK7XL2e3RvLmZcm0sTdF1/UUlHSsjXdCcWNxe7yfmAlPve5ym0DmKGtTzP6kVQ==}
+    engines: {node: '>=14.18.0'}
+
   range-parser@1.2.1:
     resolution: {integrity: sha512-Hrgsx+orqoygnmhFbKaHE6c296J+HTAQXoxEF6gNupROmmGJRoyzfG3ccAveqCBrwr/2yxQ5BVd/GTl5agOwSg==}
     engines: {node: '>= 0.6'}
@@ -2196,6 +2206,9 @@ packages:
   tree-kill@1.2.2:
     resolution: {integrity: sha512-L0Orpi8qGpRG//Nd+H90vFB+3iHnue1zSSGmNOOCh1GLJ7rUKVwV2HvijphGQS2UmhUZewS9VgvxYIdgr+fG1A==}
     hasBin: true
+
+  ts-case-convert@2.1.0:
+    resolution: {integrity: sha512-Ye79el/pHYXfoew6kqhMwCoxp4NWjKNcm2kBzpmEMIU9dd9aBmHNNFtZ+WTm0rz1ngyDmfqDXDlyUnBXayiD0w==}
 
   ts-node-dev@2.0.0:
     resolution: {integrity: sha512-ywMrhCfH6M75yftYvrvNarLEY+SUXtUvU8/0Z6llrHQVBx12GiFk5sStF8UdfE/yfzk9IAq7O5EEbTQsxlBI8w==}
@@ -4468,6 +4481,8 @@ snapshots:
     dependencies:
       side-channel: 1.0.6
 
+  radash@12.1.0: {}
+
   range-parser@1.2.1: {}
 
   raw-body@2.5.2:
@@ -4705,6 +4720,8 @@ snapshots:
   tr46@0.0.3: {}
 
   tree-kill@1.2.2: {}
+
+  ts-case-convert@2.1.0: {}
 
   ts-node-dev@2.0.0(@swc/core@1.10.0)(@types/node@22.10.1)(typescript@5.7.2):
     dependencies:
