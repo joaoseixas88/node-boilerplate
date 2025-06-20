@@ -5,19 +5,45 @@ import { GroupRoute } from "./GroupRoute";
 import { MiddleTypes } from "./middletype";
 import { Route } from "./Route";
 import { HttpMethod } from "./route-types";
+import path from "path";
+import { readdirSync } from "fs";
 
 const expressRouter = ExpressRouter();
 
 export class Router {
   private routes: (Route | GroupRoute)[] = [];
   private openGroup: GroupRoute[] = [];
+  private controllers: string[] = [];
+  private directory = path.join(
+    `${process.cwd()}`,
+    "src",
+    "app",
+    "Controllers"
+  );
+
   constructor(
     private readonly availableMiddlewares: Record<MiddleTypes, RequestHandler>
-  ) {}
+  ) {
+    this.validateControllers();
+  }
 
-  private getHandler<T>(controller: Constructor<T>, method: keyof T) {
-    const methodAdapted = methodAdapterToExpress(controller, method);
-    return methodAdapted;
+  validateControllers() {
+    const allControllers = readdirSync(this.directory).map((ctr) =>
+      ctr.replace(".ts", "")
+    );
+
+    console.log(" allControllers:", allControllers);
+
+    for (const ctr of allControllers) {
+      if (!this.controllers.includes(ctr)) {
+        throw new Error(`Controller (${ctr}) not found`);
+      }
+    }
+  }
+
+  static start(middlewares: Record<MiddleTypes, RequestHandler>) {
+    const router = new Router(middlewares);
+    return router;
   }
 
   private pushToRoutes(route: Route | GroupRoute) {
@@ -28,14 +54,9 @@ export class Router {
     }
     this.routes.push(route);
   }
-  private route<T>(
-    path: string,
-    controller: Constructor<T>,
-    method: keyof T,
-    httpMethod: HttpMethod
-  ) {
-    const handler = this.getHandler(controller, method);
-    const route = this.buildRoute(path, httpMethod, handler);
+  private route<T>(path: string, controller: string, httpMethod: HttpMethod) {
+    this.controllers.push(controller);
+    const route = this.buildRoute(path, httpMethod, controller);
     this.pushToRoutes(route);
     return route;
   }
@@ -43,13 +64,13 @@ export class Router {
   private buildRoute<T>(
     path: string,
     httpMethod: HttpMethod,
-    handler: RequestHandler
+    controller: string
   ) {
     const route = new Route(
       path,
       httpMethod,
       this.availableMiddlewares,
-      handler
+      controller
     );
     return route;
   }
@@ -63,24 +84,25 @@ export class Router {
     return group;
   }
 
-  get<T>(path: string, controller: Constructor<T>, method: keyof T) {
-    const route = this.route(path, controller, method, "get");
+  get<T>(path: string, controller: string) {
+    const route = this.route(path, controller, "get");
     return route;
   }
-  post<T>(path: string, controller: Constructor<T>, method: keyof T) {
-    const route = this.route(path, controller, method, "post");
+  post<T>(path: string, controller: string) {
+    const route = this.route(path, controller, "post");
     return route;
   }
-  delete<T>(path: string, controller: Constructor<T>, method: keyof T) {
-    const route = this.route(path, controller, method, "delete");
+  delete<T>(path: string, controller: string) {
+    const route = this.route(path, controller, "delete");
     return route;
   }
-  put<T>(path: string, controller: Constructor<T>, method: keyof T) {
-    const route = this.route(path, controller, method, "put");
+  put<T>(path: string, controller: string) {
+    const route = this.route(path, controller, "put");
     return route;
   }
 
-  applyRoutes(app: Application) {
+  async applyRoutes(app: Application) {
+    this.validateControllers();
     for (const route of this.routes) {
       route.builder(expressRouter);
     }

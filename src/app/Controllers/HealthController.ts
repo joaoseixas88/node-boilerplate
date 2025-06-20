@@ -1,8 +1,6 @@
-import { HealthValidator } from "@/app/Validators/HealthValidator";
 import { HttpContextContract } from "@/types";
-import { request } from "http";
 
-export class Health {
+export default class HealthController {
   start({ request, response }: HttpContextContract) {
     return response.ok({
       ok: true,

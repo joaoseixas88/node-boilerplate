@@ -1,7 +1,16 @@
-import { Application, RequestHandler, Router as ExpressRouter } from "express";
+import {
+  RequestHandler,
+  Router as ExpressRouter,
+  NextFunction,
+  Request,
+  Response,
+} from "express";
 import { MiddleTypes } from "./middletype";
 import { HttpMethod } from "./route-types";
 import { multerMiddleware } from "../middlewares";
+import nodePath from "path";
+import { methodAdapterToExpress } from "@/infra/config/http/adapters/MethodAdapter";
+import { Constructor } from "@/@types/constructor";
 
 export function dropSlash(input: string): string {
   if (input === "/") {
@@ -13,13 +22,25 @@ export function dropSlash(input: string): string {
 export class Route {
   private _prefixes: string[] = [];
   private _middlewares: RequestHandler[] = [];
+  private _directory = nodePath.join(
+    `${process.cwd()}`,
+    "src",
+    "app",
+    "Controllers"
+  );
+  private controllerName: string;
+  private method: string;
 
   constructor(
     private readonly path: string,
     private readonly httpMethod: HttpMethod,
     private readonly availableMiddlewares: Record<MiddleTypes, RequestHandler>,
-    private readonly handler: RequestHandler
-  ) {}
+    private readonly controller: string
+  ) {
+    const [controllerName, method] = this.controller.split(".");
+    this.controllerName = controllerName;
+    this.method = method;
+  }
 
   prefix(prefix: string) {
     this._prefixes.push(prefix);
@@ -29,6 +50,28 @@ export class Route {
   middleware(middleware: MiddleTypes) {
     this._middlewares.push(this.availableMiddlewares[middleware]);
     return this;
+  }
+
+  private checkMethod(controller: Constructor<any>) {
+    const methods = Object.getOwnPropertyNames(controller.prototype);
+    if (!methods.includes(this.method)) {
+      throw new Error(
+        `Method (${this.method}) not found in controller (${this.controllerName})`
+      );
+    }
+  }
+
+  private async importController(): Promise<Constructor<any>> {
+    const controllerModule = await import(
+      `${this._directory}/${this.controllerName}`
+    );
+
+    if (!controllerModule.default) {
+      throw new Error(`Controller (${this.controllerName}) not found`);
+    }
+    const controller = controllerModule.default;
+    this.checkMethod(controller);
+    return controller;
   }
 
   get prefixes() {
@@ -53,23 +96,34 @@ export class Route {
     return this.applyRoute;
   }
 
-  private applyRoute(expressRouter: ExpressRouter) {
+  private async getHandler(req: Request, res: Response, next: NextFunction) {
+    const controller = await this.importController();
+    const method = this.controller.split(".")[1];
+    const methodAdapted = methodAdapterToExpress(controller, method);
+    return methodAdapted(req, res, next);
+  }
+
+  private async applyRoute(expressRouter: ExpressRouter) {
     const pattern = this.getPattern();
-    const handler: RequestHandler[] = this.middlewares.length
-      ? [...this.middlewares, multerMiddleware, this.handler]
-      : [multerMiddleware, this.handler];
+    const handler = (req: Request, res: Response, next: NextFunction) =>
+      this.getHandler(req, res, next);
+    const handlers = await Promise.all(
+      this.middlewares.length
+        ? [...this.middlewares, multerMiddleware, handler]
+        : [multerMiddleware, handler]
+    );
     switch (this.httpMethod) {
       case "get":
-        expressRouter.get(pattern, ...handler);
+        expressRouter.get(pattern, ...handlers);
         break;
       case "put":
-        expressRouter.put(pattern, ...handler);
+        expressRouter.put(pattern, ...handlers);
         break;
       case "delete":
-        expressRouter.delete(pattern, ...handler);
+        expressRouter.delete(pattern, ...handlers);
         break;
       case "post":
-        expressRouter.post(pattern, ...handler);
+        expressRouter.post(pattern, ...handlers);
         break;
     }
   }
