@@ -7,9 +7,6 @@ import { NextFunction, Request, Response } from "express";
 import { unlink } from "fs/promises";
 import { container } from "tsyringe";
 
-const returnHttpException = (err: HttpException): HttpResponse =>
-  new HttpResponse(err.statusCode, err);
-
 class HttpContextRequestImpl implements HttpContextRequest {
   public filesToDelete: { filepath: string }[] = [];
   constructor(
