@@ -1,3 +1,3 @@
 import { Middlewares } from "@/types/middlewares";
 
-export type MiddleTypes = Middlewares 
+export type MiddleTypes = Middlewares

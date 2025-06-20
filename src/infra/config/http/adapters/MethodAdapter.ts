@@ -226,4 +226,81 @@ export const methodAdapterToExpress =
       }
       return res.status(500).send('Internal server error');
     }
-  };
+    return new HttpResponse(422, error);
+  }
+}
+
+export const methodAdapterToExpress = <T>(
+  controller: new (...args: any[]) => T,
+  method: keyof T
+) => async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const instance = container.resolve(controller);
+    const requestContext = new HttpContextRequestImpl(req, res, next);
+    const responseContext = new HttpContextResponseImpl(req, res, next);
+    const ctx = {
+      request: requestContext,
+      response: responseContext,
+    };
+
+    if (typeof instance[method] === "function") {
+      const httpResponse = await instance[method](ctx);
+      if (httpResponse instanceof HttpResponse) {
+        if (requestContext.filesToDelete.length) {
+          for (const fileToDelete of requestContext.filesToDelete) {
+            unlink(fileToDelete.filepath).catch((e: any) => {
+              if (e.code !== "ENOENT") {
+                console.log(e);
+              }
+            });
+          }
+        }
+        if (httpResponse.file) {
+          return res.sendFile(
+            httpResponse.file.path,
+            httpResponse.file.options ?? {},
+            (err: any) => {
+              if (err) {
+                ErrorHelper.sendToLogger(err);
+                res.status(500).send("Internal server error");
+              }
+            }
+          );
+        }
+        return res
+          .status(httpResponse.statusCode ?? 200)
+          .json(httpResponse.data);
+      }
+      if (httpResponse?.status) {
+        const { status, ...rest } = httpResponse;
+        return res.status(httpResponse.status).json(rest);
+      }
+      if (httpResponse?.statusCode) {
+        const { statusCode, ...rest } = httpResponse;
+        return res.status(httpResponse.statusCode).json(rest);
+      }
+      if (!res.headersSent) {
+        return res.status(200).json(httpResponse);
+      }
+    }
+  } catch (error) {
+    ErrorHelper.sendToLogger(error);
+    if (error instanceof HttpException) {
+      return res.status(error.statusCode).json(
+        error.message
+          ? {
+              ...error,
+              message: error.message,
+            }
+          : error
+      );
+    }
+    if (error instanceof ValidationException) {
+      return res.status(error.statusCode).json({
+        message: "Validation error",
+        issues: error.issues,
+      });
+    }
+    return res.status(500).send("Internal server error");
+  }
+};
